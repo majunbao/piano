@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>piano</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  #piano {
+    /*background-color: #000;*/
+    display: block;
+  }
+  </style>
+  <script>
+  var pianoCanvas, pianoCtx, list = [], audio;
+  var context = new(window.AudioContext || window.webkitAudioContext);
+  var source = null;
+  var audioBuffer = null;
+
+  var sources = {};
+  var audiosBuffer = {};
+  var audios;
+
+
+  function init() {
+
+    window.requestAnimFrame = (function() {
+      return window.requestAnimFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback) {
+        window.setTimeout(callback, 1000 / 60);
+      };
+    })();
+
+    pianoCanvas = document.getElementById('piano');
+    pianoCanvas.width = window.innerWidth;
+    pianoCanvas.height = window.innerHeight;
+
+    audios = ['1', '2', '3', '4', '5', '6', '7'];
+
+    audios.forEach(function (key){
+      loadAudioFile('audio/' + key + '.mp3', function(e){
+        initSound(this.response, function(buffer){
+          console.log(key)
+          audiosBuffer[key] = buffer;
+        });
+      });
+    });
+
+  }
+
+  function draw(x, y) {
+
+    pianoCtx = pianoCanvas.getContext('2d');
+
+    var keyW = 0;
+
+    audios.forEach(function(t) {
+      var nowkey = new keys(keyW, 0, 50, 200, t);
+      nowkey.draw(pianoCtx, x, y);
+      list.push(nowkey)
+      keyW = keyW + 60;
+    })
+
+  }
+
+  function keys(x, y, w, h, t) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.t = t;
+    this.draw = function(ctx, pointX, pointY) {
+      ctx.beginPath();
+      ctx.fillStyle = "#000";
+      ctx.rect(this.x, this.y, this.w, this.h);
+      if (pointX && pointY && ctx.isPointInPath(pointX, pointY)) {
+        ctx.fillStyle = 'red';
+        if (this.t === 'pause') {
+
+        } else {
+          playSound(this.t);
+        }
+      }
+      ctx.fill();
+    }
+  }
+
+  function stopSound() {
+    if (source) {
+      source.stop(0); //立即停止
+    }
+  }
+
+  function playSound(i) {
+    console.log(i)
+    sources = context.createBufferSource();
+    sources.loop = false;
+    sources.connect(context.destination);
+    sources.buffer = audiosBuffer[i]
+    sources.start(); //立即播放
+  }
+
+
+
+  function initSound(arrayBuffer, callback) {
+    // callback 解码成功时的回调函数
+    context.decodeAudioData(arrayBuffer, callback, function(e) { //解码出错时的回调函数
+      console.log('Error decoding file', e);
+    });
+
+  }
+
+  function loadAudioFile(url, callback) {
+
+    var xhr = new XMLHttpRequest(); //通过XHR下载音频文件
+    xhr.open('GET', url, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = callback;
+    xhr.send();
+
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    init();
+    draw();
+
+    document.addEventListener('touchstart', function(event) {
+
+      draw(event.touches[0].clientX, event.touches[0].clientY);
+
+      event.preventDefault();
+
+    }, false)
+
+  }, false)
+  </script>
+</head>
+
+<body>
+  <canvas id="piano"></canvas>
+</body>
+
+</html>

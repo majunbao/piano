@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>piano</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  #piano {
+    /*background-color: #000;*/
+    display: block;
+  }
+  </style>
+  <script>
+  var pianoCanvas, pianoCtx, list = [],
+    audio;
+
+  function init() {
+
+    window.requestAnimFrame = (function() {
+      return window.requestAnimFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback) {
+        window.setTimeout(callback, 1000 / 60);
+      };
+    })();
+
+    pianoCanvas = document.getElementById('piano');
+    pianoCanvas.width = window.innerWidth;
+    pianoCanvas.height = window.innerHeight;
+
+    audio = document.createElement('audio');
+    audio.src = 'audio/Run Go Run.mp3';
+
+  }
+
+  function draw(x, y) {
+
+    pianoCtx = pianoCanvas.getContext('2d');
+
+    var playTime = [0, 5, 10, 15, 20, 'pause'];
+    var keyW = 0;
+
+    playTime.forEach(function(t) {
+      var nowkey = new keys(keyW, 0, 50, 200, t);
+      nowkey.draw(pianoCtx, x, y);
+      list.push(nowkey)
+      keyW = keyW + 60;
+    })
+
+  }
+
+  function keys(x, y, w, h, t) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.t = t;
+    this.draw = function(ctx, pointX, pointY) {
+      ctx.beginPath();
+      ctx.fillStyle = "#000";
+      ctx.rect(this.x, this.y, this.w, this.h);
+      if (pointX && pointY && ctx.isPointInPath(pointX, pointY)) {
+        ctx.fillStyle = 'red';
+        if (this.t === 'pause') {
+          audio.pause()
+        } else {
+          audio.currentTime = this.t;
+          audio.play();
+        }
+      }
+      ctx.fill();
+    }
+  }
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    init();
+    draw();
+
+    document.addEventListener('touchstart', function(event) {
+
+      draw(event.touches[0].clientX, event.touches[0].clientY);
+
+      event.preventDefault();
+
+    }, false)
+    
+
+  }, false)
+  </script>
+</head>
+
+<body>
+  <canvas id="piano"></canvas>
+</body>
+
+</html>
