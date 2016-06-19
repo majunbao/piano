@@ -58,13 +58,19 @@
 
     pianoCtx = pianoCanvas.getContext('2d');
 
-    var keyW = 0;
+    var keyStart = 0;
+    var keyBlack = 10;
+
+    var keyW = (pianoCanvas.width - keyBlack * (audios.length-1)) / audios.length
 
     audios.forEach(function(t) {
-      var nowkey = new keys(keyW, 0, 50, 200, t);
+      var nowkey = new keys(keyStart, 0, 50, 200, t);
       nowkey.draw(pianoCtx, x, y);
       list.push(nowkey)
-      keyW = keyW + 60;
+      console.log(keyW)
+      keyStart = keyStart + keyW + keyBlack;
+      console.log(keyStart)
+      
     })
 
   }
