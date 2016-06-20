@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,7 +47,6 @@
     audios.forEach(function (key){
       loadAudioFile('audio/' + key + '.mp3', function(e){
         initSound(this.response, function(buffer){
-          console.log(key)
           audiosBuffer[key] = buffer;
         });
       });
@@ -57,20 +57,19 @@
   function draw(x, y) {
 
     pianoCtx = pianoCanvas.getContext('2d');
-
-    var keyStart = 0;
-    var keyBlack = 10;
-
+    
+    var keyBlack = 15;
+    var keyX = 0;
+    var keyH = 200;
+    var keyY = pianoCanvas.height - keyH;
     var keyW = (pianoCanvas.width - keyBlack * (audios.length-1)) / audios.length
+    
 
     audios.forEach(function(t) {
-      var nowkey = new keys(keyStart, 0, 50, 200, t);
+      var nowkey = new keys(keyX, keyY, keyW, keyH, t);
       nowkey.draw(pianoCtx, x, y);
       list.push(nowkey)
-      console.log(keyW)
-      keyStart = keyStart + keyW + keyBlack;
-      console.log(keyStart)
-      
+      keyX = keyX + keyW + keyBlack;
     })
 
   }
@@ -104,7 +103,6 @@
   }
 
   function playSound(i) {
-    console.log(i)
     sources = context.createBufferSource();
     sources.loop = false;
     sources.connect(context.destination);
@@ -148,7 +146,10 @@
   </script>
 </head>
 
-<body>
+<body><script type='text/javascript' id="__bs_script__">//<![CDATA[
+    document.write("<script async src='/browser-sync/browser-sync-client.2.9.3.js'><\/script>".replace("HOST", location.hostname));
+//]]></script>
+
   <canvas id="piano"></canvas>
 </body>
 
