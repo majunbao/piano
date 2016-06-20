@@ -19,7 +19,8 @@
   }
   </style>
   <script>
-  var pianoCanvas, pianoCtx, list = [], audio;
+  var pianoCanvas, pianoCtx, list = [],
+    audio;
   var context = new(window.AudioContext || window.webkitAudioContext);
   var source = null;
   var audioBuffer = null;
@@ -43,9 +44,9 @@
 
     audios = ['1', '2', '3', '4', '5', '6', '7'];
 
-    audios.forEach(function (key){
-      loadAudioFile('audio/' + key + '.mp3', function(e){
-        initSound(this.response, function(buffer){
+    audios.forEach(function(key) {
+      loadAudioFile('audio/' + key + '.mp3', function(e) {
+        initSound(this.response, function(buffer) {
           audiosBuffer[key] = buffer;
         });
       });
@@ -56,14 +57,15 @@
   function draw(x, y) {
 
     pianoCtx = pianoCanvas.getContext('2d');
-    
-    var keyBlack = 15;
+
+    var keyBlack = 5;
     var keyX = 0;
     var keyH = 200;
     var keyY = pianoCanvas.height - keyH;
-    var keyW = (pianoCanvas.width - keyBlack * (audios.length-1)) / audios.length
-    
+    var keyW = (pianoCanvas.width - keyBlack * (audios.length - 1)) / audios.length
 
+
+    list = [];
     audios.forEach(function(t) {
       var nowkey = new keys(keyX, keyY, keyW, keyH, t);
       nowkey.draw(pianoCtx, x, y);
@@ -129,11 +131,54 @@
 
   }
 
+  function sound(tone){
+
+    if(Array.isArray(tone)){
+      tone.forEach(function(val,index){
+        var val = val - 1;
+        setTimeout(function(){
+          draw(list[val].x+1,list[val].y+1)
+        },index*500)
+      })
+    }
+    
+  }
+
+  var music = [1,2,3,1,1,2,3,1];
+
+
   document.addEventListener('DOMContentLoaded', function() {
     init();
     draw();
 
+    // setTimeout(function() {
+    //     // document.dispatchEvent(touchEvent);
+    //     // a
+    //   }, 2000)
+
+    // var touch = new Touch({
+    //     identifier: 42,
+    //     target: document,
+    //     clientX: list[0].x + 1,
+    //     clientY: list[0].y + 1,
+    //     screenX: list[0].x + 1,
+    //     screenY: list[0].y + 1,
+    //     pageX: list[0].x + 1,
+    //     pageY: list[0].y + 1,
+    //     radiusX: 5,
+    //     radiusY: 5
+    //   });
+
+      // var touchEvent = new TouchEvent("touchstart", {
+      //   cancelable: true,
+      //   bubbles: true,
+      //   touches: [touch],
+      //   targetTouches: [touch],
+      //   changedTouches: [touch]
+      // });
+
     document.addEventListener('touchstart', function(event) {
+      sound(music);
 
       draw(event.touches[0].clientX, event.touches[0].clientY);
 
@@ -142,6 +187,7 @@
     }, false)
 
   }, false)
+ 
   </script>
 </head>
 
