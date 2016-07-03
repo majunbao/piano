@@ -1,0 +1,19 @@
+{
+  "name": "piano",
+  "version": "1.0.0",
+  "description": "[demo:](https://majunbao.github.io/piano/). Please use a phone to access.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/majunbao/piano.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/majunbao/piano/issues"
+  },
+  "homepage": "https://github.com/majunbao/piano#readme"
+}
