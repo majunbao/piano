@@ -1,76 +1,23 @@
-// var sources = {
-//   src: 'piano'
-// }
-
-
-
-
-// var playaudio = function(soundName) {
-//   var audioContext = new(window.AudioContext || window.webkitAudioContext);
-//   var audiosBuffer = {};
-//   audioContext.decodeAudioData();
-// }
-
-// var init = function() {
-
-
-
-//   // 载入声音
-//   for (var i = 0; i < pianoKeys.length; i++) {
-//     loadSound(pianoKeys[i], function() {
-
-//     })
-//   }
-
-//   // 准备声音
-
-
-// }
-
 var audioContext = new(window.AudioContext || window.webkitAudioContext);
 
 // 音名
 var audioNames = [
-  'A0', '#A0', 'B0',
-  'C1', '#C1', 'D1', '#D1', 'E1', 'F1', '#F1', 'G1', '#G1', 'A1', '#A1', 'B1',
-  'C2', '#C2', 'D2', '#D2', 'E2', 'F2', '#F2', 'G2', '#G2', 'A2', '#A2', 'B2',
-  'C3', '#C3', 'D3', '#D3', 'E3', 'F3', '#F3', 'G3', '#G3', 'A3', '#A3', 'B3',
-  'C4', '#C4', 'D4', '#D4', 'E4', 'F4', '#F4', 'G4', '#G4', 'A4', '#A4', 'B4',
-  'C5', '#C5', 'D5', '#D5', 'E5', 'F5', '#F5', 'G5', '#G5', 'A5', '#A5', 'B5',
-  'C6', '#C6', 'D6', '#D6', 'E6', 'F6', '#F6', 'G6', '#G6', 'A6', '#A6', 'B6',
-  'C7', '#C7', 'D7', '#D7', 'E7', 'F7', '#F7', 'G7', '#G7', 'A7', '#A7', 'B7',
+  'A0', 'Bb0', 'B0',
+  'C1', 'Db1', 'D1', 'Eb1', 'E1', 'F1', 'Gb1', 'G1', 'Ab1', 'A1', 'Bb1', 'B1',
+  'C2', 'Db2', 'D2', 'Eb2', 'E2', 'F2', 'Gb2', 'G2', 'Ab2', 'A2', 'Bb2', 'B2',
+  'C3', 'Db3', 'D3', 'Eb3', 'E3', 'F3', 'Gb3', 'G3', 'Ab3', 'A3', 'Bb3', 'B3',
+  'C4', 'Db4', 'D4', 'Eb4', 'E4', 'F4', 'Gb4', 'G4', 'Ab4', 'A4', 'Bb4', 'B4',
+  'C5', 'Db5', 'D5', 'Eb5', 'E5', 'F5', 'Gb5', 'G5', 'Ab5', 'A5', 'Bb5', 'B5',
+  'C6', 'Db6', 'D6', 'Eb6', 'E6', 'F6', 'Gb6', 'G6', 'Ab6', 'A6', 'Bb6', 'B6',
+  'C7', 'Db7', 'D7', 'Eb7', 'E7', 'F7', 'Gb7', 'G7', 'Ab7', 'A7', 'Bb7', 'B7',
   'C8'
 ];
 
-
-// audios{
-// #A0 {
-// src: 'piain/#A/#A0.mp3',
-// buffer: {object}
-// }
-
-// }
+// audios 对象
+//pro buffer
+//pro src
 var audios = (function() {
   var _audios = {};
-  // var length = audioNames.length;
-  // var i = 0;
-  // _loadaudio(audioNames[i], function() {
-  //   var name = audioNames[i];
-  //   var src = 'piano' + '/' + name.replace(/[0-9]/, '') + '/' + name + '.mp3';
-  //   _audios[name].src = src;
-  //   _audios[name].buffer = this.response;
-  // });
-
-  // for (var i = 0; i < audioNames.length; i++) {
-  //   var name = audioNames[i];
-  //   var src = 'piano' + '/' + name.replace(/[0-9]/, '') + '/' + name + '.mp3';
-  //   _audios[name] = {};
-  // }
-  // var i = 0;
-  //   _loadaudio(audioNames[i], function(){
-  //     console.log(this)
-
-  //   })
   var i = 0;
 
   function _loadaudio(audioFile) {
@@ -84,17 +31,17 @@ var audios = (function() {
         var name = audioNames[i];
         _audios[name] = {};
         _audios[name].src = src;
-        console.log(this)
-        audioContext.decodeAudioData(this.response, function(buffer){
-          // _audios[name].audiobuffer = buffer;
-          // _loadaudio(name);
-        },function(err){
-          // console.log(err)
+
+        audioContext.decodeAudioData(this.response, function(buffer) {
+          _audios[name].buffer = buffer;
+          loding(i)
+          _loadaudio(name);
+        }, function(err) {
+          console.log(err)
         })
       } else {
-        console.log('ok')
+        main()
       }
-
     };
     xhr.send();
   }
@@ -102,52 +49,37 @@ var audios = (function() {
   return _audios;
 })()
 
-// // 声音文件列表
-// var audioFiles = (function() {
-//   var _audioFiles = [];
-//   for (var i = 0; i < audioNames.length; i++) {
-//     var name = audioNames[i];
-//     var url = 'piano' + '/' + name.replace(/[0-9]/, '') + '/' + name + '.mp3';
-//     _audioFiles.push(url);
-//   }
-//   return _audioFiles;
-// })()
+var playaudio = function(soundName) {
+  sources = audioContext.createBufferSource();
+  sources.loop = false;
+  sources.connect(audioContext.destination);
+  sources.buffer = audios[soundName].buffer
+  sources.start(); //立即播放
+}
 
-// // 准备声音
-// var audioBuffers = (function() {
-//   var _audioFiles = [];
-//   for (var i = 0; i < audioNames.length; i++) {
-//     var name = audioNames[i];
-//     var url = 'piano' + '/' + name.replace(/[0-9]/, '') + '/' + name + '.mp3';
-//     _audioFiles.push(url);
-//   }
-//   var _audioBuffers = [];
-//   for (var i = 0; i < audioFiles.length; i++) {
-//     _loadaudio(audioFiles[i], function() {
-//       _audioBuffers.push(this.response);
-//     })
-//   };
-
-//   return _audioBuffers;
-// })()
-
-
-// 私有方法
-var i = 0;
-
-function _loadaudio(audioFile) {
-  var src = 'piano' + '/' + audioFile.replace(/[0-9]/, '') + '/' + audioFile + '.mp3';
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', src, true);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function(event) {
-    i++;
-    if (i < audioNames.length) {
-      _loadaudio(audioNames[i]);
-    } else {
-      console.log('ok')
+var play = function(music) {
+  if (typeof music === 'string') {
+    playaudio(music);
+  } else if (music instanceof Array) {
+    for (var i = 0; i < music.length; i++) {
+      (function() {
+        var j = i;
+        setTimeout(function() {
+          playaudio(music[j]);
+          console.log(j)
+        }, i * 300)
+      })()
     }
+  }
+}
 
-  };
-  xhr.send();
+// 载入过程中不断调用
+function loding(progress){
+  document.body.innerHTML = Math.round(((progress+1)/audioNames.length)*100) + '%';
+}
+
+// 文件准备就绪后 自动执行 main 函数
+function main(){
+  var music = ['C8','A3','A2','A1','A3','C8','B3'];
+  play(music);
 }
